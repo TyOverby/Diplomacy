@@ -11,26 +11,29 @@ var map = new Map(ce.width / factor,
                   ce.height / factor,
                   factor, factor, canvas);
 
-var entities = [];
-var settlements = [];
+var entityManagers = [];
+
+var context = {map: map, canvas: canvas, width: map.tiles.width, height: map.tiles.height, ww: factor, hh: factor};
 
 var loop = function () {
 
     map.draw();
-    entities.forEach(function (e) {
-        e.draw();
-    });
-    settlements.forEach(function (s) {
-        s.draw();
+    entityManagers.forEach(function (em){
+        em.step();
+        em.draw();
     });
 
-    requestAnimationFrame(loop);
+    window.requestAnimationFrame(loop);
 }.bind(this);
 
 loop();
 
-var e = new Entity(4, 4, 1, {canvas: canvas, ww: factor, hh: factor});
-entities.push(e);
+entityManagers.push(new EntityManager(context));
 
-var s = new Settlement(10, 10, 2, {canvas: canvas, ww: factor, hh: factor});
-entities.push(s);
+for (var i = 0; i < 20; i++){
+    var e = new Entity(4, 4, 1, context);
+    entityManagers[0].entities.push(e);
+}
+
+var s = new Settlement(10, 10, 2, context);
+entityManagers[0].settlements.push(s);
