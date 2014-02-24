@@ -9,20 +9,51 @@
                 padding: 0px;
                 background-color: black;
             }
+            * {
+                color: white;
+            }
         </style>
     </head>
     <body>
-        <canvas id="canvas">
+        <canvas id="canvas" style="float: left;">
 
         </canvas>
 
         <script src="./noisejs/perlin.js"></script>
+        <script src="./pathfinding-browser.min.js"></script>
 
         <script src="./util.js"></script>
         <script src="./path.js"></script>
         <script src="./map.js"></script>
         <script src="./entity.js"></script>
         <script src="./entityman.js"></script>
+        <script src="./omni.js"></script>
         <script src="./main.js"></script>
     </body>
+    <div style="float: left; color: white;">
+        <div id="a">
+            <h2> Red </h2>
+            Tribesmen:      <span class="total"></span></br>
+            Average Health: <span class="avgh"></span></br>
+            Average Power:  <span class="avgp"></span></br>
+        </div>
+        <div id="b">
+            <h2> Yellow </h2>
+            Tribesmen:      <span class="total"></span></br>
+            Average Health: <span class="avgh"></span></br>
+            Average Power:  <span class="avgp"></span></br>
+        </div>
+        <div id="c">
+            <h2> Purple </h2>
+            Tribesmen:      <span class="total"></span></br>
+            Average Health: <span class="avgh"></span></br>
+            Average Power:  <span class="avgp"></span></br>
+        </div>
+        <div id="d">
+            <h2> Cyan </h2>
+            Tribesmen:      <span class="total"></span></br>
+            Average Health: <span class="avgh"></span></br>
+            Average Power:  <span class="avgp"></span></br>
+        </div>
+    </div>
 </html>

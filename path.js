@@ -12,7 +12,25 @@ function sign(a) {
     }
 }
 
+var pmap = null;
+var pfgrid = null;
+function setupPath(m) {
+    pmap = m;
+    pfgrid = new PF.Grid(m.w, m.h);
+    pmap.tiles.map(function (x, y, v){
+        if(!pmap.isWalkable({x:x,y:y})) {
+            pfgrid.setWalkableAt(x, y, false);
+        }
+    });
+}
+
 function path(s, d) {
+    var finder = new PF.AStarFinder({
+        allowDiagonal: true
+    });
+    var path = finder.findPath(s.x, s.y, d.x, d.y, pfgrid.clone());
+    return path;
+
     var sx = Math.floor(s.x),
         sy = Math.floor(s.y),
         dx = Math.floor(d.x),

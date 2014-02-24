@@ -8,6 +8,10 @@ function dist(a, b) {
     return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }
 
+function choose(arr){
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
 function Grid(width, height) {
     this.width = width;
     this.height = height;

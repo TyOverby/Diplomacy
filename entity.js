@@ -24,6 +24,7 @@ function Entity(x, y, team, env, parent) {
     this.danger = false;
 
     this.carrying = null;
+    this.dead = false;
 }
 
 Entity.prototype.draw = function() {
@@ -33,6 +34,32 @@ Entity.prototype.draw = function() {
     this.env.canvas.arc(
             this.x * this.env.ww + this.env.ww / 2,
             this.y * this.env.hh + this.env.hh / 2,
+            this.env.hh / 2, 2 * Math.PI, false);
+    this.env.canvas.fill();
+};
+
+Entity.prototype.drawTween = function (f) {
+    this.env.canvas.fillStyle = TeamColors[this.team];
+
+    var curX = this.x;
+    var curY = this.y;
+    var nextX, nextY;
+
+    if (this.path.length > 0) {
+        nextX = this.path[0][0];
+        nextY = this.path[0][1];
+    } else {
+        nextX = curX;
+        nextY = curY;
+    }
+
+    var tweenX = (curX * (1 - f)) + (nextX * f);
+    var tweenY = (curY * (1 - f)) + (nextY * f);
+
+    this.env.canvas.beginPath();
+    this.env.canvas.arc(
+            tweenX * this.env.ww + this.env.ww / 2,
+            tweenY * this.env.hh + this.env.hh / 2,
             this.env.hh / 2, 2 * Math.PI, false);
     this.env.canvas.fill();
 };
@@ -77,17 +104,20 @@ function Settlement(x, y, team, env) {
         "WOOD": 0
     };
 
-    this.birthCountdown = 400;
     this.health = 400;
+
+    this.saving = false;
 }
 
 Settlement.prototype.canSpawn = function() {
-    if (this.resources.WOOD>= 8 &&
-        this.resources.WATER >= 8){
+    if(this.saving) {
+        return false;
+    }
+    if (this.resources.WOOD >= 8 &&
+        this.resources.WATER >= 4){
             this.resources.WOOD -= 8;
-            this.resources.WATER -= 8;
+            this.resources.WATER -= 4;
 
-            console.log("spawning!");
             return true;
     }
     return false;

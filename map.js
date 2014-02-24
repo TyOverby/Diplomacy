@@ -4,6 +4,8 @@ function Map(w, h, ww, hh, canvas) {
     this.ww = ww;
     this.hh = hh;
     this.canvas = canvas;
+    this.buffer = null;
+    this.buffer2 = null;
 
     this.TileTypes = {
         GRASS: 0,
@@ -12,6 +14,8 @@ function Map(w, h, ww, hh, canvas) {
         DIRT: 3,
         BRUSH: 4,
     };
+
+
     this.ReverseTileTypes = {
         0: 'GRASS',
         1: 'STONE',
@@ -27,7 +31,7 @@ function Map(w, h, ww, hh, canvas) {
     this.ColorMaps = {
         GRASS: "green",
         STONE: "grey",
-        DIRT: "rgb(120, 130, 60)",
+        DIRT: "rgb(70, 120, 60)",
         BRUSH: "rgb(30, 90, 30)",
         WATER: "darkblue"
     };
@@ -65,11 +69,46 @@ function Map(w, h, ww, hh, canvas) {
 }
 
 Map.prototype.draw = function() {
-    this.tiles.foreach(function(x, y, value) {
-        this.canvas.fillStyle = this.ColorMaps[this.ReverseTileTypes[value]];
-        this.canvas.fillRect(x * this.ww, y * this.hh, this.ww, this.hh);
+    if(this.buffer === null) {
+        var c = document.createElement('canvas');
+        c.width = this.w * this.ww;
+        c.height = this.h * this.hh;
+        this.buffer = c;
 
-        this.canvas.fillStyle = "rgba(0,0,0," + this.rand.get(x,y) + ")";
-        this.canvas.fillRect(x * this.ww, y * this.hh, this.ww, this.hh);
-    }.bind(this));
+        this.tiles.foreach(function(x, y, value) {
+            var ctx = this.buffer.getContext('2d');
+            ctx.fillStyle = this.ColorMaps[this.ReverseTileTypes[value]];
+            ctx.fillRect(x * this.ww, y * this.hh, this.ww, this.hh);
+        }.bind(this));
+    } else {
+        this.canvas.drawImage(this.buffer, 0, 0);
+    }
 }
+
+Map.prototype.drawOverlay = function () {
+    this.tiles.foreach(function(x, y, value) {
+    }.bind(this));
+};
+
+Map.prototype.drawOverlay = function() {
+    if(this.buffer2 === null) {
+        var c = document.createElement('canvas');
+        c.width = this.w * this.ww;
+        c.height = this.h * this.hh;
+        this.buffer2 = c;
+
+        this.tiles.foreach(function(x, y, value) {
+            var ctx = this.buffer2.getContext('2d');
+            ctx.fillStyle = "rgba(0,0,0," + this.rand.get(x,y) + ")";
+            ctx.fillRect(x * this.ww, y * this.hh, this.ww, this.hh);
+        }.bind(this));
+    } else {
+        this.canvas.drawImage(this.buffer2, 0, 0);
+    }
+}
+
+Map.prototype.isWalkable = function(p) {
+    var v = this.tiles.get(p.x, p.y);
+    return v !== this.TileTypes.WATER &&
+           v !== this.TileTypes.BRUSH;
+};
