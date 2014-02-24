@@ -34,6 +34,10 @@ Grid.prototype.set = function (x, y, v) {
     return v;
 };
 
+Grid.prototype.contains = function (x, y) {
+    return x >= 0 && y >= 0 && x < this.width && y < this.height;
+};
+
 Grid.prototype.foreach = function (f) {
     var i, k;
     for (i = 0; i < this.width; i++) {

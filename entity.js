@@ -5,11 +5,12 @@ var TeamColors = {
     4: "cyan"
 };
 
-function Entity(x, y, team, env) {
+function Entity(x, y, team, env, parent) {
     this.x = x;
     this.y = y;
     this.team = team;
     this.env = env;
+    this.parent = parent;
 
     this.carrying = null;
     this.maxHealth = Math.random() * 100;
@@ -18,13 +19,15 @@ function Entity(x, y, team, env) {
     this.strength = Math.random() * 20;
 
     this.path = [];
+    this.target = null;
     this.busy = false;
+    this.danger = false;
+
+    this.carrying = null;
 }
 
 Entity.prototype.draw = function() {
     this.env.canvas.fillStyle = TeamColors[this.team];
-    //this.env.canvas.fillRect(this.x * this.env.ww, this.y * this.env.hh,
-    //        this.env.ww, this.env.hh);
 
     this.env.canvas.beginPath();
     this.env.canvas.arc(
@@ -35,11 +38,26 @@ Entity.prototype.draw = function() {
 };
 
 Entity.prototype.move = function () {
+    if (this.health <= this.maxHealth / 2) {
+        this.danger = true;
+    }
+
     if (this.path.length === 0) {
-        console.log("not moving");
         this.busy = false;
+        this.parent.enqueueIdler(this);
+
+        if (this.target) {
+            if(this.env.map.tiles.get(this.target.x, this.target.y) === this.env.map.TileTypes['BRUSH']) {
+                this.carrying = 'WOOD';
+            }
+            if(this.env.map.tiles.get(this.target.x, this.target.y) === this.env.map.TileTypes['WATER']) {
+                this.carrying = 'WATER';
+            }
+        }
+
         return;
     }
+
     this.busy = true;
 
     var next = this.path.shift();
@@ -55,8 +73,6 @@ function Settlement(x, y, team, env) {
     this.env = env;
 
     this.resources = {
-        "FOOD": 0,
-        "STONE": 0,
         "WATER": 0,
         "WOOD": 0
     };
@@ -66,12 +82,13 @@ function Settlement(x, y, team, env) {
 }
 
 Settlement.prototype.canSpawn = function() {
-    this.birthCountdown -= 1;
-    if (this.birthCountdown === 0) {
-        if (this.resources.FOOD >= 10 &&
-            this.resources.WATER >= 10){
-                return true;
-        }
+    if (this.resources.WOOD>= 8 &&
+        this.resources.WATER >= 8){
+            this.resources.WOOD -= 8;
+            this.resources.WATER -= 8;
+
+            console.log("spawning!");
+            return true;
     }
     return false;
 };

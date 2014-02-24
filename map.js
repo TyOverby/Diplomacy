@@ -20,7 +20,8 @@ function Map(w, h, ww, hh, canvas) {
         4: 'BRUSH'
     };
 
-    this.TileArr = [ 'BRUSH', 'WATER', 'GRASS', 'DIRT', 'GRASS', 'BRUSH', 'WATER'];
+    this.TileArr =
+        [ 'BRUSH', 'WATER', 'GRASS', 'DIRT', 'GRASS', 'BRUSH', 'WATER'];
     this.pValues = [  0.2,     0.6,     0.9,     1.1,     1.2,     2.0];
 
     this.ColorMaps = {
